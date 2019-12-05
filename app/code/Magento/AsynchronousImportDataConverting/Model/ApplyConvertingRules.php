@@ -72,6 +72,9 @@ class ApplyConvertingRules implements ApplyConvertingRulesInterface
      */
     public function execute(array $importData, array $convertingRules): array
     {
+        usort($convertingRules, function ($previousRule, $nextRule) {
+            return $previousRule['sort'] <=> $nextRule['sort'];
+        });
         foreach ($convertingRules as $convertingRule) {
             $validationResult = $this->convertingRuleValidator->validate($convertingRule);
             if (false === $validationResult->isValid()) {
