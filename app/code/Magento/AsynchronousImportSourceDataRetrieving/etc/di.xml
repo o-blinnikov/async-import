@@ -20,10 +20,10 @@
     <type name="Magento\AsynchronousImportSourceDataRetrieving\Model\RetrieveSourceData">
         <arguments>
             <argument name="retrievingStrategies" xsi:type="array">
-                <item name="local_file" xsi:type="string">Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\LocalFile</item>
-                <item name="base64_encoded_data" xsi:type="string">Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\Base64EncodedData</item>
-                <item name="remote_http" xsi:type="string">Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\RemoteHttp</item>
-                <item name="remote_https" xsi:type="string">Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\RemoteHttps</item>
+                <item name="local_file" xsi:type="object">Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\LocalFile\Proxy</item>
+                <item name="base64_encoded_data" xsi:type="object">Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\Base64EncodedData\Proxy</item>
+                <item name="remote_http" xsi:type="object">Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\RemoteHttp\Proxy</item>
+                <item name="remote_https" xsi:type="object">Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\RemoteHttps\Proxy</item>
             </argument>
         </arguments>
     </type>
@@ -41,7 +41,7 @@
     <!-- Base64 Encoded Data -->
     <type name="Magento\AsynchronousImportSourceDataRetrieving\Model\SourceDataRetrievingStrategy\Base64EncodedData">
         <arguments>
-            <argument name="dataSeparator" xsi:type="string">\n</argument>
+            <argument name="batchSize" xsi:type="number">3</argument>
         </arguments>
     </type>
 </config>

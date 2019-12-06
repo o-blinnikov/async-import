@@ -9,7 +9,6 @@ namespace Magento\AsynchronousImportDataConvertingApi\Model;
 
 use Magento\AsynchronousImportDataConvertingApi\Api\ApplyConvertingRulesException;
 use Magento\AsynchronousImportDataConvertingApi\Api\Data\ConvertingRuleInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Validation\ValidationResult;
 use Magento\Framework\Validation\ValidationResultFactory;
 
@@ -21,11 +20,6 @@ use Magento\Framework\Validation\ValidationResultFactory;
 class ConvertingRuleValidatorChain implements ConvertingRuleValidatorInterface
 {
     /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
      * @var ValidationResultFactory
      */
     private $validationResultFactory;
@@ -36,22 +30,19 @@ class ConvertingRuleValidatorChain implements ConvertingRuleValidatorInterface
     private $validators;
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @param ValidationResultFactory $validationResultFactory
      * @param array $validators
      * @throws ApplyConvertingRulesException
      */
     public function __construct(
-        ObjectManagerInterface $objectManager,
         ValidationResultFactory $validationResultFactory,
         array $validators = []
     ) {
-        $this->objectManager = $objectManager;
         $this->validationResultFactory = $validationResultFactory;
         foreach ($validators as $validator) {
             if (!$validator instanceof ConvertingRuleValidatorInterface) {
                 throw new ApplyConvertingRulesException(
-                    __('Validator must implement ' . ConvertingRuleValidatorInterface::class . '.')
+                    __('Validator must implement %1.', ConvertingRuleValidatorInterface::class)
                 );
             }
         }

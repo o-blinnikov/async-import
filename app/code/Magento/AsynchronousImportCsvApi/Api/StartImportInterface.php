@@ -26,10 +26,10 @@ interface StartImportInterface
     /**
      * Start import operation
      *
-     * @param SourceInterface $source
-     * @param ImportInterface $import
-     * @param CsvFormatInterface|null $format
-     * @param ConvertingRuleInterface[] $convertingRules
+     * @param SourceInterface $source Describes how to retrieve data from data source
+     * @param ImportInterface $import Describes how to import data
+     * @param CsvFormatInterface|null $format Describes how to parse data
+     * @param ConvertingRuleInterface[] $convertingRules Describes how to change data before import
      * @return string
      * @throws ValidationException
      * @throws SourceDataRetrievingException

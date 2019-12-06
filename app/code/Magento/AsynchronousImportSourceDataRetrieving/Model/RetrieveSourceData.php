@@ -14,7 +14,6 @@ use Magento\AsynchronousImportSourceDataRetrievingApi\Api\RetrieveSourceDataInte
 use Magento\AsynchronousImportSourceDataRetrievingApi\Api\SourceDataRetrievingException;
 use Magento\AsynchronousImportSourceDataRetrievingApi\Model\RetrieveSourceDataStrategyInterface;
 use Magento\AsynchronousImportSourceDataRetrievingApi\Model\SourceValidatorInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Validation\ValidationException;
 use Magento\Framework\Validation\ValidationResultFactory;
 
@@ -23,11 +22,6 @@ use Magento\Framework\Validation\ValidationResultFactory;
  */
 class RetrieveSourceData implements RetrieveSourceDataInterface
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
     /**
      * @var SourceValidatorInterface
      */
@@ -39,7 +33,7 @@ class RetrieveSourceData implements RetrieveSourceDataInterface
     private $validationResultFactory;
 
     /**
-     * @var array
+     * @var RetrieveSourceDataStrategyInterface[]
      */
     private $retrievingStrategies;
 
@@ -49,29 +43,26 @@ class RetrieveSourceData implements RetrieveSourceDataInterface
     private $sourceDataFactory;
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @param SourceValidatorInterface $sourceValidator
      * @param ValidationResultFactory $validationResultFactory
      * @param SourceDataInterfaceFactory $sourceDataFactory
-     * @param array $retrievingStrategies
+     * @param RetrieveSourceDataStrategyInterface[] $retrievingStrategies
      * @throws SourceDataRetrievingException
      */
     public function __construct(
-        ObjectManagerInterface $objectManager,
         SourceValidatorInterface $sourceValidator,
         ValidationResultFactory $validationResultFactory,
         SourceDataInterfaceFactory $sourceDataFactory,
         array $retrievingStrategies = []
     ) {
-        $this->objectManager = $objectManager;
         $this->sourceValidator = $sourceValidator;
         $this->validationResultFactory = $validationResultFactory;
         $this->sourceDataFactory = $sourceDataFactory;
 
         foreach ($retrievingStrategies as $retrievingStrategy) {
-            if (false === is_subclass_of($retrievingStrategy, RetrieveSourceDataStrategyInterface::class)) {
+            if (!$retrievingStrategy instanceof RetrieveSourceDataStrategyInterface) {
                 throw new SourceDataRetrievingException(
-                    __('%1 must implement %2.', [$retrievingStrategy, RetrieveSourceDataStrategyInterface::class])
+                    __('Source data retrieving strategy must implement %1.', RetrieveSourceDataStrategyInterface::class)
                 );
             }
         }
@@ -99,9 +90,7 @@ class RetrieveSourceData implements RetrieveSourceDataInterface
             );
             throw new ValidationException(__('Validation Failed.'), null, 0, $validationResult);
         }
-        /** @var RetrieveSourceDataStrategyInterface $retrievingStrategy */
-        $retrievingStrategy = $this->objectManager->get($this->retrievingStrategies[$sourceType]);
-        $iterator = $retrievingStrategy->execute($source);
+        $iterator = $this->retrievingStrategies[$sourceType]->execute($source);
 
         /** @var SourceDataInterface $sourceData */
         $sourceData = $this->sourceDataFactory->create(

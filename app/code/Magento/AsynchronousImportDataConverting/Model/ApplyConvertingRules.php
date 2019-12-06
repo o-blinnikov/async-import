@@ -11,7 +11,6 @@ use Magento\AsynchronousImportDataConvertingApi\Api\ApplyConvertingRulesExceptio
 use Magento\AsynchronousImportDataConvertingApi\Api\ApplyConvertingRulesInterface;
 use Magento\AsynchronousImportDataConvertingApi\Model\ApplyConvertingRuleStrategyInterface;
 use Magento\AsynchronousImportDataConvertingApi\Model\ConvertingRuleValidatorInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Validation\ValidationException;
 use Magento\Framework\Validation\ValidationResultFactory;
 
@@ -20,11 +19,6 @@ use Magento\Framework\Validation\ValidationResultFactory;
  */
 class ApplyConvertingRules implements ApplyConvertingRulesInterface
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
     /**
      * @var ConvertingRuleValidatorInterface
      */
@@ -36,31 +30,28 @@ class ApplyConvertingRules implements ApplyConvertingRulesInterface
     private $validationResultFactory;
 
     /**
-     * @var array
+     * @var ApplyConvertingRuleStrategyInterface[]
      */
     private $ruleApplyingStrategies;
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @param ConvertingRuleValidatorInterface $convertingRuleValidator
      * @param ValidationResultFactory $validationResultFactory
-     * @param array $ruleApplyingStrategies
+     * @param ApplyConvertingRuleStrategyInterface[] $ruleApplyingStrategies
      * @throws ApplyConvertingRulesException
      */
     public function __construct(
-        ObjectManagerInterface $objectManager,
         ConvertingRuleValidatorInterface $convertingRuleValidator,
         ValidationResultFactory $validationResultFactory,
         array $ruleApplyingStrategies = []
     ) {
-        $this->objectManager = $objectManager;
         $this->convertingRuleValidator = $convertingRuleValidator;
         $this->validationResultFactory = $validationResultFactory;
 
         foreach ($ruleApplyingStrategies as $ruleApplyingStrategy) {
-            if (false === is_subclass_of($ruleApplyingStrategy, ApplyConvertingRuleStrategyInterface::class)) {
+            if (!$ruleApplyingStrategy instanceof ApplyConvertingRuleStrategyInterface) {
                 throw new ApplyConvertingRulesException(
-                    __('%1 must implement %2.', [$ruleApplyingStrategy, ApplyConvertingRuleStrategyInterface::class])
+                    __('Apply converting rule strategy must implement %1.', ApplyConvertingRuleStrategyInterface::class)
                 );
             }
         }
@@ -95,12 +86,8 @@ class ApplyConvertingRules implements ApplyConvertingRulesInterface
                 );
                 throw new ValidationException(__('Validation Failed.'), null, 0, $validationResult);
             }
-
-            /** @var ApplyConvertingRuleStrategyInterface $ruleApplyingStrategy */
-            $ruleApplyingStrategy = $this->objectManager->get(
-                $this->ruleApplyingStrategies[$identifier]
-            );
-            $importData = $ruleApplyingStrategy->execute($importData, $convertingRule);
+            $importData = $this->ruleApplyingStrategies[$identifier]
+                ->execute($importData, $convertingRule);
         }
         return $importData;
     }

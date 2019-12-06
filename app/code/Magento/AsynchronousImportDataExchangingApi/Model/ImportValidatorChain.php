@@ -9,7 +9,6 @@ namespace Magento\AsynchronousImportDataExchangingApi\Model;
 
 use Magento\AsynchronousImportDataExchangingApi\Api\Data\ImportInterface;
 use Magento\AsynchronousImportDataExchangingApi\Api\ImportDataExchangeException;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Validation\ValidationResult;
 use Magento\Framework\Validation\ValidationResultFactory;
 
@@ -21,11 +20,6 @@ use Magento\Framework\Validation\ValidationResultFactory;
 class ImportValidatorChain implements ImportValidatorInterface
 {
     /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
      * @var ValidationResultFactory
      */
     private $validationResultFactory;
@@ -36,22 +30,19 @@ class ImportValidatorChain implements ImportValidatorInterface
     private $validators;
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @param ValidationResultFactory $validationResultFactory
      * @param array $validators
      * @throws ImportDataExchangeException
      */
     public function __construct(
-        ObjectManagerInterface $objectManager,
         ValidationResultFactory $validationResultFactory,
         array $validators = []
     ) {
-        $this->objectManager = $objectManager;
         $this->validationResultFactory = $validationResultFactory;
         foreach ($validators as $validator) {
             if (!$validator instanceof ImportValidatorInterface) {
                 throw new ImportDataExchangeException(
-                    __('Validator must implement ' . ImportValidatorInterface::class . '.')
+                    __('Validator must implement %1.', ImportValidatorInterface::class)
                 );
             }
         }

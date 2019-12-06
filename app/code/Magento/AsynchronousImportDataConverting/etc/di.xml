@@ -17,10 +17,12 @@
     <type name="Magento\AsynchronousImportDataConverting\Model\ApplyConvertingRules">
         <arguments>
             <argument name="ruleApplyingStrategies" xsi:type="array">
-                <item name="uppercase_first_character" xsi:type="string">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\UppercaseFirstCharacter</item>
-                <item name="remove_field" xsi:type="string">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\RemoveField</item>
-                <item name="uppercase_string" xsi:type="string">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\UppercaseString</item>
-                <item name="string_replace" xsi:type="string">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\StringReplace</item>
+                <item name="uppercase_first_character" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\UppercaseFirstCharacter\Proxy</item>
+                <item name="remove_field" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\RemoveField\Proxy</item>
+                <item name="uppercase_string" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\UppercaseString\Proxy</item>
+                <item name="string_replace" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\StringReplace\Proxy</item>
+                <item name="yes_no_to_bool" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\YesNoToBool\Proxy</item>
+                <item name="lowercase_string" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\LowercaseString\Proxy</item>
             </argument>
         </arguments>
     </type>
@@ -28,8 +30,8 @@
     <type name="Magento\AsynchronousImportDataConvertingApi\Model\ConvertingRuleValidatorChain">
         <arguments>
             <argument name="validators" xsi:type="array">
-                <item name="identifier" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\ConvertingRuleValidator\IdentifierValidator</item>
                 <item name="string_replace_parameters" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\ConvertingRuleValidator\StringReplaceParametersValidator</item>
+                <item name="identifier" xsi:type="object">Magento\AsynchronousImportDataConverting\Model\ConvertingRuleValidator\IdentifierValidator</item>
             </argument>
         </arguments>
     </type>
@@ -40,6 +42,17 @@
                 <item name="remove_field" xsi:type="string">remove_field</item>
                 <item name="uppercase_string" xsi:type="string">uppercase_string</item>
                 <item name="string_replace" xsi:type="string">string_replace</item>
+                <item name="lowercase_string" xsi:type="string">lowercase_string</item>
+                <item name="yes_no_to_bool" xsi:type="string">yes_no_to_bool</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Converting rules -->
+    <type name="Magento\AsynchronousImportDataConverting\Model\RuleApplyingStrategy\YesNoToBool">
+        <arguments>
+            <argument name="conversionMap" xsi:type="array">
+                <item name="yes" xsi:type="boolean">true</item>
+                <item name="no" xsi:type="boolean">false</item>
             </argument>
         </arguments>
     </type>

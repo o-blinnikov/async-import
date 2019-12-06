@@ -12,7 +12,6 @@ use Magento\AsynchronousImportDataExchangingApi\Api\ExchangeImportDataInterface;
 use Magento\AsynchronousImportDataExchangingApi\Api\ImportDataExchangeException;
 use Magento\AsynchronousImportDataExchangingApi\Model\ExchangeDataStrategyInterface;
 use Magento\AsynchronousImportDataExchangingApi\Model\ImportValidatorInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Validation\ValidationException;
 use Magento\Framework\Validation\ValidationResultFactory;
 
@@ -21,11 +20,6 @@ use Magento\Framework\Validation\ValidationResultFactory;
  */
 class ExchangeImportData implements ExchangeImportDataInterface
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
     /**
      * @var ImportValidatorInterface
      */
@@ -37,31 +31,28 @@ class ExchangeImportData implements ExchangeImportDataInterface
     private $validationResultFactory;
 
     /**
-     * @var array
+     * @var ExchangeDataStrategyInterface[]
      */
     private $exchangingStrategies;
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @param ImportValidatorInterface $importValidator
      * @param ValidationResultFactory $validationResultFactory
-     * @param array $exchangingStrategies
+     * @param ExchangeDataStrategyInterface[] $exchangingStrategies
      * @throws ImportDataExchangeException
      */
     public function __construct(
-        ObjectManagerInterface $objectManager,
         ImportValidatorInterface $importValidator,
         ValidationResultFactory $validationResultFactory,
         array $exchangingStrategies
     ) {
-        $this->objectManager = $objectManager;
         $this->importValidator = $importValidator;
         $this->validationResultFactory = $validationResultFactory;
 
         foreach ($exchangingStrategies as $exchangingStrategy) {
-            if (false === is_subclass_of($exchangingStrategy, ExchangeDataStrategyInterface::class)) {
+            if (!$exchangingStrategy instanceof ExchangeDataStrategyInterface) {
                 throw new ImportDataExchangeException(
-                    __('%1 must implement %2.', [$exchangingStrategy, ExchangeDataStrategyInterface::class])
+                    __('Exchange data strategy must implement %1.', ExchangeDataStrategyInterface::class)
                 );
             }
         }
@@ -89,9 +80,6 @@ class ExchangeImportData implements ExchangeImportDataInterface
             );
             throw new ValidationException(__('Validation Failed.'), null, 0, $validationResult);
         }
-
-        /** @var ExchangeDataStrategyInterface $exchangingStrategy */
-        $exchangingStrategy = $this->objectManager->get($this->exchangingStrategies[$importType]);
-        $exchangingStrategy->execute($import, $importData);
+        $this->exchangingStrategies[$importType]->execute($import, $importData);
     }
 }

@@ -11,7 +11,7 @@
     <type name="Magento\AsynchronousImportDataExchanging\Model\ExchangeImportData">
         <arguments>
             <argument name="exchangingStrategies" xsi:type="array">
-                <item name="advanced_pricing" xsi:type="string">Magento\AsynchronousImportAdvancedPricing\Model\DataExchangingStrategy\AdvancedPricing</item>
+                <item name="advanced_pricing" xsi:type="object">Magento\AsynchronousImportAdvancedPricing\Model\DataExchangingStrategy\AdvancedPricing\Proxy</item>
             </argument>
         </arguments>
     </type>
