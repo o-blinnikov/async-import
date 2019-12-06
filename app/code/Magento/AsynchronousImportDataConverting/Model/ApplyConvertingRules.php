@@ -98,7 +98,7 @@ class ApplyConvertingRules implements ApplyConvertingRulesInterface
 
             /** @var ApplyConvertingRuleStrategyInterface $ruleApplyingStrategy */
             $ruleApplyingStrategy = $this->objectManager->get(
-                $this->ruleApplyingStrategies[$convertingRule->getIdentifier()]
+                $this->ruleApplyingStrategies[$identifier]
             );
             $importData = $ruleApplyingStrategy->execute($importData, $convertingRule);
         }
