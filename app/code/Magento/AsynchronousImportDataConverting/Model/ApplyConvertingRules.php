@@ -64,7 +64,7 @@ class ApplyConvertingRules implements ApplyConvertingRulesInterface
     public function execute(array $importData, array $convertingRules): array
     {
         usort(
-            $convertingRules, 
+            $convertingRules,
             function ($previousRule, $nextRule) {
                 return $previousRule['sort'] <=> $nextRule['sort'];
             }
